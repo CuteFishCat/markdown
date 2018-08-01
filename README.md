@@ -220,7 +220,7 @@ ___
 [www.magedu.com](http://www.magedu.com)
 
 # 九. 图片
-9.1 和图片类似，在连接前面加上一个!号即可代表一个图片。
+9.1 和链接类似，在连接的书写格式前面加上一个!号即可代表一个图片。
 书写方式如下：
 `![googel](https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png)`
 
