@@ -238,14 +238,3 @@ ___
 比如写个java代码，用 `` ``` ``将代码包含，并在第一行写书java格式要求
 
  
-{```java
-public class HelloWorld {
-
-       public static void main(String[] args) {
-
-                 System.out.println("Hello,World!!!");
-
-       }
-
-}
-```}
