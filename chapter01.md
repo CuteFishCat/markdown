@@ -1,5 +1,5 @@
 ![googel](https://github.com/CuteFishCat/markdown/blob/master/logo.png)
-### 一. 标题
+## 一. 标题
 
 1.1 一级标题的写法：  
 `# 我是一级标题`  
@@ -54,7 +54,7 @@ C  and perl
 ### hello world ###
 
    
-### 二. 段落
+## 二. 段落
 2.1 文章段落的基本使用   
 我写一个短文，使用空行实现换行功能。如下图,：  
 
