@@ -1,5 +1,5 @@
 ![googel](https://github.com/CuteFishCat/markdown/blob/master/logo.png)
-# 一. 标题
+## 一. 标题
 
 1.1 一级标题的写法：  
 `# 我是一级标题`  
@@ -54,7 +54,7 @@ C  and perl
 ### hello world ###
 
    
-# 二. 段落
+## 二. 段落
 2.1 文章段落的基本使用   
 我写一个短文，使用空行实现换行功能。如下图,：  
 
@@ -78,7 +78,7 @@ C  and perl
 今天天气不错，心情挺好的。  
 我们下午没有课
 
-# 三. 字体强调
+## 三. 字体强调
 3.1 使用两个 * 号 或者 _ 将要加粗的内容字体加粗  
 `hello world`  
 `hello **world**`  
@@ -111,7 +111,7 @@ hello ___world___
 当然还可以使用 加粗和斜体的组合方式，有需要的可以试一下。
 
 
-# 四. 引用
+## 四. 引用
 4.1 可以使用 > 符号引用内容，比如：  
 我写的第一行代码功能就是输出 hello world  
 `> hello world`
@@ -157,7 +157,7 @@ hello ___world___
 >> Python3.6
 
 
-# 五. 列表的使用
+## 五. 列表的使用
 
 5.1 有序列表是用 数字 和 . 构成列表序号，如下 ：  
 `1. Unix`  
@@ -185,7 +185,7 @@ hello ___world___
 * C 语言
 
 
-# 六. 代码
+## 六. 代码
 6.1 使用 `` ` `` 包含的内容为代码，比如：  
 
 在写shell程序时，先在开头写一个   
@@ -204,7 +204,7 @@ hello ___world___
     echo "hello world"
 
 
-# 七. 分割线
+## 七. 分割线
 7.1 使用三个 * 或 -  或 _ 生成下划线
 
 `***`   
@@ -216,14 +216,14 @@ hello ___world___
 ---
 ___
 
-# 八. 超链接
+## 八. 超链接
 8.1 创建一个连接,[]内写连接内容，()内写连接地址，如下：  
 `[www.magedu.com](http://www.magedu.com)`
 
 效果如下：
 [www.magedu.com](http://www.magedu.com)
 
-# 九. 图片
+## 九. 图片
 9.1 和链接类似，在连接的书写格式前面加上一个!号即可代表一个图片。
 书写方式如下：
 `![googel](https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png)`
