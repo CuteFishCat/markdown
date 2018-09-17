@@ -237,8 +237,8 @@ ___
 10.1 当文章中有代码时，我们可以使用代码块包含代码，使其成为一个整体，并具备特定的显示风格。
 比如写个java代码，用 `` ``` ``将代码包含，并在第一行写书java格式要求
 
-``
-```java
+ 
+`` ``` ``java
 public class HelloWorld {
 
        public static void main(String[] args) {
@@ -248,5 +248,4 @@ public class HelloWorld {
        }
 
 }
-```
-``
+`` ``` ``
