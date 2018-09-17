@@ -79,6 +79,7 @@ C  and perl
 
 # 三. 字体强调
 3.1 使用两个 * 号 或者 _ 将要加粗的内容字体加粗  
+`hello world`  
 `hello **world**`  
 `hello __world__`
 
@@ -89,6 +90,7 @@ hello __world__
 
 
 3.2 和加粗类似，使用一个 * 或者 _ 包裹对应内容设置为意大利斜体字样  
+`hello world`  
 `hello *world*`  
 `hello _world_`  
 
