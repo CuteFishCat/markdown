@@ -1,4 +1,4 @@
-[![](https://github.com/CuteFishCat/markdown/blob/master/logo.png)](http://www.magedu.com/)
+[![](https://github.com/CuteFishCat/markdown/blob/master/source/image/01magedulogo.png)](http://www.magedu.com/)
 ## 一. 标题
 
 1.1 一级标题的写法：  
