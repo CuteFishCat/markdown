@@ -251,8 +251,8 @@ public class HelloWorld {
 }
 ```
 
-Linux使用过程中，当想将命令行的执行过程作为整体显示时，也可以使用代码块，将上面的`` ``` ``后的java缓存bash即可:  
 
+Linux使用过程中，当想将命令行的执行过程作为整体显示时，也可以使用代码块，将上面的`` ``` ``后的java缓存bash即可:  
 ![](https://github.com/CuteFishCat/markdown/blob/master/source/image/02codebash.png)
 
 显示效果如下：  
