@@ -216,24 +216,9 @@ hello ___world___
 ---
 ___
 
-## 八. 超链接
-8.1 创建一个连接,[]内写连接内容，()内写连接地址，如下：  
-`[www.magedu.com](http://www.magedu.com)`
-
-效果如下：
-[www.magedu.com](http://www.magedu.com)
-
-## 九. 图片
-9.1 和链接类似，在连接的书写格式前面加上一个!号即可代表一个图片。
-书写方式如下：
-`![googel](https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png)`
 
 
-效果如下：  
-
-![googel](https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png)
-
-## 十. 代码块
+## 八. 代码块
 10.1 当文章中有代码时，我们可以使用代码块包含代码，使其成为一个整体，并具备特定的显示风格。  
 比如写个java代码，用 `` ``` ``将代码包含，并在第一行写书java格式要求
   
@@ -283,7 +268,7 @@ drwxr-xr-x.  21 root root 4096 Jun  2 10:12 var
 ```
 
 
-## 十一. 表格
+## 九. 表格
 11.1 表格是一种常见的数据内容展现形式，Markdown中也可以实现表格，书写表格的语法如下，使用 ` | `代表每行中的分隔符，在分隔符之间填写具体的数据就好，在第二行内书写`-`表示上一行为表头，可以再`-`的最左边或者最又面添加一个`:`来代表下面的内容是左对齐还是右对齐，同时在两边添加`:`冒号时代表居中  
 ![](https://github.com/CuteFishCat/markdown/blob/master/source/image/04codetable.png)  
 
@@ -297,5 +282,20 @@ drwxr-xr-x.  21 root root 4096 Jun  2 10:12 var
 |003     |Wang      |66          |M         |400-080-6560|Beijing |
 
 
+## 十. 超链接
+8.1 创建一个连接,[]内写连接内容，()内写连接地址，如下：  
+`[www.magedu.com](http://www.magedu.com)`
+
+效果如下：
+[www.magedu.com](http://www.magedu.com)
 
 
+## 十一. 图片
+9.1 和链接类似，在连接的书写格式前面加上一个!号即可代表一个图片。
+书写方式如下：
+`![googel](https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png)`
+
+
+效果如下：  
+
+![googel](https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png)
