@@ -285,7 +285,7 @@ drwxr-xr-x.  21 root root 4096 Jun  2 10:12 var
 
 ## 十一. 表格
 11.1 表格是一种常见的数据内容展现形式，Markdown中也可以实现表格，书写表格的语法如下，使用 ` | `代表每行中的分隔符，在分隔符之间填写具体的数据就好，在第二行内书写`-`表示上一行为表头，可以再`-`的最左边或者最又面添加一个`:`来代表下面的内容是左对齐还是右对齐，同时在两边添加`:`冒号时代表居中  
-![](https://github.com/CuteFishCat/markdown/blob/master/source/image/04code4table.png)  
+![](https://github.com/CuteFishCat/markdown/blob/master/source/image/04codetable.png)  
 
 显示效果如下，第一行为表头：  
 
