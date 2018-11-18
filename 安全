@@ -1,0 +1,1051 @@
+# 加密和安全
+### 单向散列 
+将任意数据缩小成固定大小的“指纹” 
+• 任意长度输入  
+
+• 固定长度输出   
+
+• 若修改数据，指纹也会改变（“不会产生冲突”）   
+
+• 无法从指纹中重新生成数据（“单向”）    
+ 功能：数据完整性 
+ ### 常见算法 
+ md5: 128bits、sha1: 160bits、sha224 、sha256、sha384、sha512 
+### 常用工具 
+• md5sum | sha1sum  [ --check  ]  file   
+
+• openssl、gpg   
+
+• rpm  -V   
+
+##  应用程序：RPM 
+文件完整性的两种实施方式   
+
+被安装的文件  
+
+ • MD5单向散列  
+
+ • rpm  --verify  package_name  (or  -V) 
+发行的软件包文件  
+
+• GPG公钥签名  
+
+• rpm  --import  /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat*   
+
+• rpm  --checksig  pakage_file_name  (or  -K)   
+
+###  使用gpg实现对称加密 
+对称加密file文件    
+
+gpg -c file  ls file.gpg   
+
+在另一台主机上解密file    
+
+gpg -o file -d file.gpg    
+
+### 使用gpg工具实现公钥加密 
+在hostB主机上用公钥加密，在hostA主机上解密   
+
+在hostA主机上生成公钥/私钥对  
+ gpg --gen-key   
+
+在hostA主机上查看公钥  
+gpg --list-keys   
+
+在hostA主机上导出公钥到wang.pubkey   
+
+gpg -a  --export -o wang.pubkey   
+
+从hostA主机上复制公钥文件到需加密的B主机上 
+scp wang.pubkey  hostB: 
+ 
+###  使用gpg工具实现公钥加密 
+在需加密数据的hostB主机上生成公钥/私钥对 
+gpg --list-keys  gpg --gen-key    
+
+在hostB主机上导入公钥  
+gpg --import wang.pubkey  
+gpg --list-keys   
+
+用从hostA主机导入的公钥，加密hostB主机的文件file,生成file.gpg
+gpg -e -r wangxiaochun file   
+ file file.gpg   
+
+###  使用gpg工具实现公钥加密 
+复制加密文件到hostA主机 
+scp fstab.gpg hostA:   
+
+在hostA主机解密文件 
+gpg -d file.gpg    
+gpg -o file  -d file.gpg    
+
+删除公钥和私钥 
+ gpg --delete-keys  wangxiaochun   
+
+ gpg --delete-secret-keys  wangxiaochun     
+
+
+
+##  OpenSSL 
+###  OpenSSL：开源项目  
+      三个组件：   
+        openssl：多用途的命令行工具，包openssl   
+          libcrypto：加密算法库，包openssl-libs   
+          libssl：加密模块应用库，实现了ss
+         及tls，包nss 
+###  openssl命令：  
+           两种运行模式：交互模式和批处理模式  
+            openssl version：程序版本号  
+            标准命令、消息摘要命令、加密命令   
+                              标准命令：enc, ca, req, ... 
+ 
+###   openssl命令 
+     对称加密：  
+          工具：openssl enc, gpg  
+          算法：3des, aes, blowfish, twofish 
+     enc命令：  
+           帮助：man enc  
+            加密：  openssl enc -e -des3 -a -salt -in testfile -out testfile.cipher  
+            解密：  openssl enc -d -des3 -a -salt –in testfile.cipher -out testfile  
+                         openssl ? 
+ 
+### openssl命令 
+     单向加密：   
+          工具：md5sum, sha1sum, sha224sum,sha256sum…  
+                     openssl dgst 
+      dgst命令：  
+             帮助：man dgst  
+              openssl dgst -md5 [-hex默认] /PATH/SOMEFILE  
+              openssl dgst -md5 testfile  
+              md5sum /PATH/TO/SOMEFILE 
+ MAC: Message Authentication Code，单向加密的一种延伸应用，用于实现 网络通信中保证所传输数据的完整性机制  
+ CBC-MAC    
+
+ HMAC：使用md5或sha1算法   
+
+###  openssl命令 
+生成用户密码：  
+passwd命令: 
+帮助：man sslpasswd    
+
+openssl passwd -1 -salt SALT(最多8位)    
+
+openssl passwd -1 –salt  centos   
+
+生成随机数：   
+
+ 帮助：man sslrand   
+
+openssl rand -base64|-hex NUM   
+
+ NUM: 表示字节数，使用-hex，每个字符为十六进制，相当于4位二进制， 出现的字符数为NUM*2 
+### openssl命令 
+公钥加密：  
+ 算法：RSA, ELGamal     
+
+ 工具：gpg, openssl rsautl（man rsautl） 
+数字签名： 
+            算法：RSA, DSA, ELGamal 
+密钥交换：  
+ 算法：dh  
+DSA：Digital Signature Algorithm   
+
+DSS：Digital Signature Standard    
+
+ RSA： 
+###  openssl命令 
+生成密钥对儿：man genrsa 
+生成私钥   
+
+openssl genrsa -out /PATH/TO/PRIVATEKEY.FILE NUM_BITS   
+
+(umask 077; openssl genrsa –out test.key –des 2048)  
+ openssl rsa -in test.key –out test2.key 将加密key解密 
+从私钥中提取出公钥  
+
+ openssl rsa -in PRIVATEKEYFILE –pubout –out PUBLICKEYFILE    
+
+  openssl rsa –in test.key –pubout –out test.key.pub 
+随机数生成器：伪随机数字 
+ 键盘和鼠标，块设备中断    
+
+ /dev/random：仅从熵池返回随机数；随机数用尽，阻塞   
+
+ /dev/urandom：从熵池返回随机数；随机数用尽，会利用软件生成伪随机 数,非阻塞 
+###  OpenSSL 
+PKI：Public Key Infrastructure
+  CA  
+  RA  
+CRL   
+
+ 证书存取库 
+建立私有CA:  
+  OpenCA  
+openssl   
+
+证书申请及签署步骤：   
+
+ 1、生成申请请求  
+ 2、RA核验  
+ 3、CA签署  
+ 4、获取证书 
+ 
+##  创建CA和申请证书 
+###  创建私有CA： 
+ openssl的配置文件：/etc/pki/tls/openssl.cnf
+ 三种策略：match匹配、optional可选、supplied提供 
+ match：要求申请填写的信息跟CA设置信息必须一致   
+optional：可有可无，跟CA设置信息可不一致  
+supplied：必须填写这项申请信息， 
+1. 创建所需要的文件  
+ touch /etc/pki/CA/index.txt 生成证书索引数据库文件 
+ echo 01 > /etc/pki/CA/serial 指定第一个颁发证书的序列号 
+2.  CA自签证书 
+生成私钥    
+cd /etc/pki/CA/    
+
+ (umask 066; openssl genrsa -out  private/cakey.pem 2048) 
+
+生成自签名证书  
+ openssl req -new -x509 -key     
+ /etc/pki/CA/private/cakey.pem    
+
+-days  3650  -out        
+/etc/pki/CA/cacert.pem   
+
+选项说明： 
+-new：生成新证书签署请求   
+
+-x509：专用于CA生成自签证书   
+
+-key：生成请求时用到的私钥文件    
+
+-days n：证书的有效期限    
+
+-out /PATH/TO/SOMECERTFILE: 证书的保存路径   
+
+ 3. 颁发证书 
+在需要使用证书的主机生成证书请求  
+给web服务器生成私钥   
+ (umask 066; openssl genrsa –out   /data/test.key 2048)    
+
+     生成证书申请文件 
+openssl req -new -key /data/test.key -out /data/test.csr    
+
+
+将证书请求文件传输给CA 
+CA签署证书，并将证书颁发给请求者  openssl ca -in /tmp/test.csr –out   /etc/pki/CA/certs/test.crt -days 100 
+  
+   注意：默认要求 国家，省，公司名称三项必须和CA一致  
+
+
+创建CA和证书管理 
+ 查看证书中的信息：  
+  openssl x509 -in /PATH/FROM/CERT_FILE-noout   -text|issuer|subject|serial|dates 
+ openssl  ca -status SERIAL  查看指定编号的证书状态   
+
+ 4. 吊销证书 
+在客户端获取要吊销的证书的serial  
+ openssl x509 -in /PATH/FROM/CERT_FILE   -noout   -serial  -subject    
+
+ 在CA上，根据客户提交的serial与subject信息，对比检验是否与index.txt文件中的信息一致， 吊销证书： 
+ openssl ca -revoke /etc/pki/CA/newcerts/SERIAL.pem   
+
+ 指定第一个吊销证书的编号,注意：第一次更新证书吊销列表前，才需要执行
+ echo 01 > /etc/pki/CA/crlnumber  
+
+ 更新证书吊销列表  
+openssl ca -gencrl -out /etc/pki/CA/crl.pem   
+ 查看crl文件：
+ openssl crl -in   
+ /etc/pki/CA/crl.pem -noout -text   
+ #  ssh 
+##  ssh: secure shell, protocol, 22/tcp, 安全的远程登录   
+
+#### 具体的软件实现：   
+
+             OpenSSH: ssh协议的开源实现，CentOS默认安装
+             dropbear：另一个开源实现 
+### SSH协议版本 
+                 v1: 基于CRC-32做MAC，不安全；man-in-middle 
+                 v2：双方主机协议选择安全的MAC方式  
+                 基于DH算法做密钥交换，基于RSA或DSA实现身份认证 
+### 两种方式的用户登录认证：  
+                基于password  
+                 基于key 
+### Openssh软件组成 
+OpenSSH介绍 
+相关包：    
+  openssh   
+
+        openssh-clients  
+        openssh-server 
+###  工具： 
+        基于C/S结构
+      Client: ssh, scp, sftp，slogin     
+          Windows客户端：      
+                   xshell, putty, securecrt, sshsecureshellclient  
+                  Server: sshd 
+ ##  ssh客户端 
+客户端组件： 
+###  ssh, 配置文件：/etc/ssh/ssh_config    
+                   Host PATTERN   
+                            StrictHostKeyChecking no 首次登录不显示检查提示   
+
+ ### 格式：ssh [user@]host [COMMAND]     
+            ssh [-l user] host [COMMAND]   
+
+###  常见选项  
+            -p port：远程服务器监听的端口
+            -b：指定连接的源IP 
+            -v：调试模式  
+            -C：压缩方式  
+            -X：支持x11转发  
+            -t：强制伪tty分配 
+                         ssh -t remoteserver1 ssh -t  
+                           remoteserver2   ssh    
+                            remoteserver3 
+ ## ssh客户端 
+允许实现对远程系统经验证地加密安全访问 
+当用户远程连接ssh服务器时，会复制ssh服务器/etc/ssh/ssh_host*key.pub （CentOS7默认是ssh_host_ecdsa_key.pub）文件中的公钥到客户机的 ~./ssh/know_hosts中。下次连接时，会自动匹配相应私钥，不能匹配，将拒 绝连接 
+#  scp命令 
+scp [options] SRC... DEST/ 
+###  两种方式： 
+                scp [options] [user@]host:/sourcefile  /destpath 
+                scp [options] /sourcefile  [user@]host:/destpath 
+###  常用选项：  
+                 -C 压缩数据流 
+                 -r 递归复制 
+                 -p 保持原文件的属性信息 
+                 -q 静默模式  -P PORT 指明remote host的监听的端口 
+##  rsync命令 
+基于ssh和rsh服务实现高效率的远程系统之间复制文件   
+
+使用安全的shell连接做为传输方式   
+
+• rsync  -av /etc server1:/tmp   复制目录和目录下文件   
+
+• rsync  -av  /etc/  server1:/tmp  只复制目录下文件   
+
+比scp更快，只复制不同的文件   
+
+ ## 常用选项：  
+     -n  模拟复制过程 
+     -v  显示详细过程 
+     -r  递归复制目录树   
+     -p  保留权限  
+     -t  保留时间戳 
+     -g  保留组信息 
+     -o  保留所有者信息  
+    -l   将软链接文件本身进行复制（默认）  
+    -L  将软链接文件指向的文件复制 
+     -a  存档，相当于–rlptgoD，但不保留ACL（-A）和SELinux属性（-X） 
+##  fstp
+交互式文件传输工具   
+
+用法和传统的ftp工具相似   
+
+利用ssh服务实现安全的文件上传和下载   
+
+使用ls cd m  
+kdir rmdir pwd get put等指令，可用？或help获取帮助信息   
+
+                  sftp [user@]host  
+                    sftp> help 
+fstp  ip  
+
+get file   下载文件到本机  
+
+看本机文件 ！ls  
+
+put file     上传本机文件  
+
+
+## pssh工具 
+安装  
+
+yum clean all  
+
+yum makecache  
+
+yum  install  pssh  
+
+
+ pssh是一个python编写可以在多台服务器上执行命令的工具，也可实现文件复制   
+
+###   选项如下： 
+      --version：查看版本  
+               -h：主机文件列表，内容格式”[user@]host[:port]”  
+               -H：主机字符串，内容格式”[user@]host[:port]”  
+               -A：手动输入密码模式  
+                -i：每个服务器内部处理信息输出  
+                -l：登录使用的用户名  
+                -p：并发的线程数【可选】  
+                -o：输出的文件目录【可选】  
+                -e：错误输入文件【可选】  
+                -t：TIMEOUT 超时时间设置，0无限制【可选】 
+                -O：SSH的选项  
+                -P：打印出服务器返回信息 
+                -v：详细模式  
+## pssh示例 
+通过pssh批量关闭seLinux  
+
+         pssh -H root@192.168.1.10  -i  "sed -i 
+         "s/SELINUX=enforcing/SELINUX=disabled/"  /etc/selinux/config"                         
+批量发送指令    
+
+          pssh -H root@192.168.1.10  -i  setenforce 0   
+           pssh -H wang@192.168.1.10  -i  hostname 
+当不支持ssh的key认证时，通过 -A选项，使用密码认证批量执行指令 
+ pssh -H wang@192.168.1.10  -A -i  hostname    
+
+将标准错误和标准正确重定向都保存至/app目录下 
+            pssh -H 192.168.1.10 -o /app -e /app   -i “hostname”   
+
+ ###   pscp.pssh命令 
+pscp.pssh功能是将本地文件批量复制到远程主机   
+
+pscp [-vAr] [-h hosts_file] [-H [user@]host[:port]] [-l user] [-p par] [-o outdir] [-e errdir] [-t timeout] [-O options] [-x args] [-X arg] local remote   
+
+###  pscp-pssh选项  
+        -v 显示复制过程  
+        -r 递归复制目录 
+###  将本地curl.sh 复制到/app/目录
+            pscp.pssh -H 192.168.1.10 /root/test/curl.sh    /app/  
+             pscp.pssh -h host.txt  /root/test/curl.sh    /app/  
+###  将本地多个文件批量复制到/app/目录
+            pscp.pssh -H 192.168.1.10  /root/f1.sh  /root/f2.sh    /app/ 
+###  将本地目录批量复制到/app/目录  
+            pscp.pssh -H 192.168.1.10  -r /root/test/    /app/ 
+## pslurp命令 
+pslurp功能是将远程主机的文件批量复制到本地   
+
+pslurp [-vAr] [-h  hosts_file] [-H [user@]host[:port]] [-l user] [-p par][-o outdir] [-e errdir] [-t timeout] [-O options] [-x args] [-X arg] [-L localdir] remote local（本地名）   
+
+###  pslurp选项 
+            -L 指定从远程主机下载到本机的存储的目录，local是下载到本地后的名称 
+           -r 递归复制目录 
+###  批量下载目标服务器的passwd文件至/app下，并更名为user 
+             pslurp -H 192.168.1.10 -L /app /etc/passwd user 
+ ##  SSH端口转发 
+##  本地转发：    
+       -L localport:remotehost:remotehostport   sshserver   
+
+###  选项： 
+         -f 后台启用 
+        -N 不打开远程shell，处于等待状态 
+        -g 启用网关功能 
+###  示例  
+         ssh –L  9527:telnetsrv:23 -Nfg  sshsrv 
+         telnet 127.0.0.1 9527  
+         当访问本机的9527的端口时，被加密后转发到sshsrv的ssh服务，再解密被转发 到telnetsrv:23  
+            data <-  ->localhost:9527 <-  -> localhost:XXXXX <-  -> sshsrv:22 <-  -> sshsrv:YYYYY <-  ->    telnetsrv:23 
+###  远程转发:  
+               -R sshserverport:remotehost:remotehostport  sshserver 
+###  示例：   
+           ssh –R 9527:telnetsrv:23 –Nf  sshsrv     
+          让sshsrv侦听9527端口的访问，如有访问，就加密后通过ssh服务转发请求到本 机ssh客户端，再由本机解密后转发到telnetsrv:23  Data <-  ->sshsrv:9527 <-  -> sshsrv:22 <-  ->localhost:XXXXX <-  -> localhost:YYYYY <-  -> telnetsrv:23 
+
+### 动态端口转发： 
+当用firefox访问internet时，本机的1080端口做为代理服务器，firefox的访问 请求被转发到sshserver上，由sshserver替之访问internet    
+
+       ssh -D 1080 root@sshserver  -fNg     
+
+       在本机firefox设置代理socket proxy:127.0.0.1:1080   
+
+        curl  --socks5 127.0.0.1:1080  http://www.qq.com 
+##  扩展  安装telent 
+###  一.CentOS下查看系统是否已安装telnet  
+
+rpm -qa | grep telnet  
+
+telnet-0.17-48.el6.x86_64  
+
+telnet-server-0.17-48.el6.x86_64  
+
+
+telnet 是挂在 xinetd 底下的，所以同时查看是否安装了xinetd服务  
+
+rpm -qa | grep xinetd  
+
+xinetd-2.3.14-39.el6_4.x86_64  
+
+
+两者都没有的安装的话，yum安装以下服务  
+
+yum install xinetd telnet telnet-server -y  
+
+### 二.配置telnet
+设置开机启动
+#chkconfig telnet on  
+
+修改配置文件
+vi /etc/xinetd.d/telnet  
+
+将”disable= yes”改成” disable=no”  
+
+###  三、激活服务  
+
+由于telnet服务也是由xinetd守护的，所以安装完telnet-server，要启动telnet服务就必须重启xinetd服务  
+
+service xinetd restart 或者/etc/rc.d/init.d/xinetd restart  
+
+systemctl start telnet.socket    （centos7上的）   
+
+登录目标主机检测telnet服务是否正常：telnet localhost  
+
+###  四.iptables防火墙会阻止telnet，所以需要在iptables允许，用如下命令
+当你启动telnet服务后，你可以用netstat -tunlp命令来查看  
+telnet服务所使用的端口，可以发现有23。使用下面命令开启这些端口:  
+
+iptables -I INPUT -p tcp --dport 23 -jACCEPT  
+
+iptables -I INPUT -p udp --dport 23 -jACCEPT  
+
+service iptables save //保存  
+
+service iptables restart //重启防火墙  
+
+或者来点狠的！！关闭防火墙!   
+service iptables stop  
+
+###  五.使用telnet命令  
+ 
+格式： telnet ip prot  
+
+### 六.其他常用的telnet命令功能描述：
+close  关闭当前连接  
+
+logout  强制退出远程用户并关闭连接   
+
+display 显示当前操作的参数  
+
+mode    试图进入命令行方式或字符方式  
+
+open    连接到某一站点  
+
+quit    退出  
+
+set    设置当前操作的参数  
+
+unset  复位当前操作参数  
+
+status  打印状态信息   
+
+toggle  对操作参数进行开关转换   
+
+slc    改变特殊字符的状态  
+
+auth    打开/关闭确认功能z挂起  
+
+telnetsend    发送特殊字符  
+
+telnetenviron 更改环境变量?显示帮助信息  
+
+### 七.测试
+我们先来查看TCP的23端口是否开启正常  
+
+[root@localhost ~]#netstat -tnl |grep 23 
+tcp 0 0 0.0.0.0:23 0.0.0.0:* LISTEN   
+
+如果上面的一行存在就说明服务已经运行了。如果netstat命令没有返回内容，我们就只好继续进行更深入的配置了。  
+
+### 八.允许root用户登录
+
+默认情况下Linux不允许root用户以telnet方式登录Linux主机，若要允许root用户登录可采用以下3中方法：  
+
+
+（1）修改/etc/pam.d/login配置文件  
+
+
+RedHat Linux对于远程登录的限制体现在/etc/pam.d/login文件中，把限制内容注释即可。  
+
+
+[root@vm-rhel root]# cat /etc/pam.d/login  
+
+#%PAM-1.0  
+
+auth       required   pam_securetty.so
+auth      required    pam_stack.so service=system-auth
+#auth      required    pam_nologin.so
+account    required    pam_stack.so service=system-auth
+password  required    pam_stack.so service=system-auth
+session    required    pam_stack.so service=system-auth
+session    optional    pam_console.so  
+
+（2）移除/etc/securetty文件夹
+
+验证规则设置在/etc/securetty文件中，该文件定义了root用户只能在tty1-tty6的终端上记录，删除该文件或将其改名即可避开验证规则从而实现root用户以telnet方式远程登录Linux主机。
+
+[root@vm-rhel root]# mv /etc/securetty /etc/securetty.bak
+
+（3）先用普通用户登录，然后切换到root用户
+
+[bboss@vm-rhel bboss]$ su root  
+
+Password:   
+
+[root@vm-rhel bboss]#
+#   编译安装dropbear示例 
+ssh协议的另一个实现：dropbear   
+
+源码编译安装：   
+
+• 1、安装开发包组:yum groupinstall “Development tools”  
+
+• 2、下载dropbear-2017.75.tar.bz2  
+
+• 3、tar xf dropbear-2017.75.tar.bz2   
+
+• 4、less INSTALL README   
+
+• 5、./configure   
+
+./configure --prefix=/app/dropbear     
+
+--sysconfdir=/etc/dropbear  
+
+• 6、make PROGRAMS="dropbear dbclient dropbearkey  dropbearconvert scp"   
+
+• 7、make PROGRAMS="dropbear dbclient dropbearkey dropbearconvert scp" install   
+
+启动ssh服务：  
+
+ • 8、ls /usr/local/sbin/  /usr/local/bin/  
+
+ • 9、/usr/local/sbin/dropbear  -h   
+
+• 10、mkdir /etc/dropbear   
+
+• 11、dropbearkey -t rsa -f   
+/etc/dropbear/dropbear_rsa_host_key -s 2048  
+
+• 12、dropbearkey -t dss -f     
+
+/etc/dropbear/dropbear_dsa_host_key    
+
+• 13、dropbear -p :2222 -F –E   #前台运行   dropbear -p :2222 #后台运行  
+
+ 客户端访问：  
+
+• 14、ssh -p 2222 root@127.0.0.1  
+
+• 15、dbclient -p 2222 root@127.0.0.1   
+
+
+## 实验
+1. wget https://matt.ucc.asn.au/dropbear/dropdear-2017.75.tar.bz2  
+
+2.  tar xvf dropbear-2017.75.tar.bz2 
+ 3.  cd dropbear-2017.75/
+4.  cat INSTALL
+5. /configure --prefix=/app/dropbear --sysconfdir=/etc/dropbear
+6.   make PROGRAMS="dropbear dbclient dropbearkey dropbearconvert scp"
+7.   make PROGRAMS="dropbear dbclient dropbearkey dropbearconvert scp" install
+8.   cd /app/dropbear
+9.   mkdir /etc/dropbear
+10.   cd bin
+11.  ./dropbearkey -t rsa -f /etc/dropbear/dropbear_rsa_host_key
+12.   cd /app/dropbear/sbin
+13.   ./dropbear -FE -p 22222
+
+## AIDE 
+    
+    安装 
+         yum install aide  
+
+     修改配置文件 
+          vim /etc/aide.conf (指定对哪些文件进行检测)
+          /test/chameleon R 
+          /bin/ps R+a 
+          /usr/bin/crontab R+a 
+          etc    PERMS 
+          !/etc/mtab   #“!”表示忽略这个文件的检查
+           R=p+i+n+u+g+s+m+c+md5 权限+索引节点+链接数+用户+组+大小+ 
+          最后一次修改时间+创建时间+md5校验值  
+          NORMAL = R+rmd60+sha256 
+初始化默认的AIDE的库：  
+
+           /usr/local/bin/aide --init  
+生成检查数据库（建议初始数据库存放到安全的地方）  
+
+            cd /var/lib/aide 
+            mv aide.db.new.gz aide.db.gz   
+
+    检测：  
+           /usr/local/bin/aide --check   
+
+    更新数据库
+           aide --update 
+
+ ###  更改身份 sudo
+su 切换身份:su –l  username –c  ‘command’   
+
+   sudo   
+
+ • 来自sudo包，man 5 sudoers   
+
+• sudo能够授权指定用户在指定主机上运行某些命令。如果未授权用户尝试使 用 sudo，会提示联系管理员  
+' 
+• sudo可以提供日志，记录每个用户使用sudo操作   
+
+• sudo为系统管理员提供配置文件，允许系统管理员集中地管理用户的使用权 限和使用的主机   
+
+• sudo使用时间戳文件来完成类似“检票”的系统，默认存活期为5分钟的“入 场券”   
+
+• 通过visudo命令编辑配置文件，具有语法检查功能 
+          visudo –c 检查语法
+           visudo  -f /etc/sudoers.d/test   
+
+切换用户后改配置文件 sudoedit  
+
+必须事前给权限sudoedit  
+
+###  sudo 
+配置文件：/etc/sudoers, /etc/sudoers.d/   
+
+时间戳文件：/var/db/sudo   
+
+日志文件：/var/log/secure   
+
+配置文件支持使用通配符glob   
+
+          ？:任意单一字符 
+          * ：匹配任意长度字符  
+           [wxc]:匹配其中一个字符  
+           [!wxc]:除了这三个字符的其它字符 
+           \x : 转义  
+           [[alpha]] :字母  示例： /bin/ls [[alpha]]* 
+    配置文件规则有两类  
+          1、别名定义:不是必须的 
+           2、授权规则:必须的 
+ sudoers 
+
+    授权规则格式：  
+          用户 登入主机=(代表用户) 命令
+    示例： 
+         root ALL=(ALL)  ALL 
+    格式说明： 
+          user: 运行命令者的身份 
+          host: 通过哪些主机 
+          (runas)：以哪个用户的身份 
+          command: 运行哪些命令 
+ 
+     别名 
+      Users和runas: 
+                username  
+                #uid  
+                %group_name 
+                %#gid  
+               user_alias|runas_alias 
+ ##  host:  
+ip或hostname   
+
+ network(/netmask)    
+host_alias   
+command:  
+command name  
+directory  s
+udoedit  
+Cmnd_Alias 
+sudo别名和示例   
+
+别名有四种类型
+：User_Alias, Runas_Alias, Host_Alias ，Cmnd_Alias   
+
+别名格式：[A-Z]([A-Z][0-9]_)*   
+
+    别名定义：  
+           Alias_Type NAME1 = item1, item2, item3 : NAME2 = item4, item5 
+    示例1： 
+            Student   ALL=(ALL)   ALL  
+            %wheel   ALL=(ALL)   ALL 
+    示例2：  
+             student ALL=(root)    /sbin/pidof,/sbin/ifconfig 
+            %wheel ALL=(ALL)  NOPASSWD: ALL 
+     sudo示例 
+     示例3 
+          User_Alias  NETADMIN= netuser1,netuser2  
+          Cmnd_Alias  NETCMD = /usr/sbin/ip  
+          NETADMIN ALL=（root） NETCMD 
+    示例4 
+          User_Alias SYSADER=wang,mage,%admins  
+          User_Alias DISKADER=tom 
+          Host_Alias SERS=www.magedu.com,172.16.0.0/24 
+          Runas_Alias OP=root  
+          Cmnd_Alias SYDCMD=/bin/chown,/bin/chmod  
+          Cmnd_Alias DSKCMD=/sbin/parted,/sbin/fdisk   
+          SYSADER SERS=   SYDCMD,DSKCMD  
+          DISKADER ALL=(OP)  DSKCMD  
+ 
+    sudo示例 
+    示例4
+         User_Alias ADMINUSER = adminuser1,adminuser2  
+         Cmnd_Alias ADMINCMD = /usr/sbin/useradd，/usr/sbin/usermod, /usr/bin/passwd [a-zA-Z]*, !/usr/bin/passwd root  
+          ADMINUSER ALL=(root) NOPASSWD:ADMINCMD， PASSWD:/usr/sbin/userdel 
+     示例5
+            Defaults:wang runas_default=tom  wang ALL=(tom,jerry) ALL 
+     示例6  
+            wang 192.168.1.6,192.168.1.8=(root)  /usr/sbin/,!/usr/sbin/useradd 
+     示例7  
+             wang   ALL=(ALL)  /bin/cat /var/log/messages* 
+##  sudo命令 
+ls -l /usr/bin/sudo   
+
+sudo –i –u wang 切换身份   
+
+    sudo [-u user] COMMAND   
+            -V 显示版本信息等配置信息 
+            -u user  默认为root  
+            -l,ll 列出用户在主机上可用的和被禁止的命令 
+            -v 再延长密码有效期限5分钟,更新时间戳  
+             k 清除时间戳（1970-01-01），下次需要重新输密码 
+             -K 与-k类似，还要删除时间戳文件 
+             -b 在后台执行指令  
+             -p 改变询问密码的提示符号    示例：-p ”password on %h for user %p:”  
+
+
+##  TCP_Wrappers介绍 
+作者：Wieste Venema，IBM，Google   
+
+工作在第四层（传输层）的TCP协议   
+
+对有状态连接的特定服务进行安全检测并实现访问控制 
+以库文件形式实现   
+
+某进程是否接受libwrap的控制取决于发起此进程的程序在编译时是否针对 libwrap进行编译的   
+
+判断服务程序是否能够由tcp_wrapper进行访问控制的方法：  
+
+  ldd  /PATH/TO/PROGRAM|grep libwrap.so   
+
+ strings PATH/TO/PROGRAM|grep libwrap.so   
+
+##  TCP_Wrappers的使用 
+配置文件：/etc/hosts.allow, /etc/hosts.deny   
+
+帮助参考：man 5 hosts_access，man 5 hosts_options   
+
+    检查顺序：hosts.allow，hosts.deny（默认允许）    
+         注意：一旦前面规则匹配，直接生效，将不再继续 
+    基本语法: 
+           daemon_list@host: client_list  [ :options :option… ] 
+    Daemon_list@host格式 
+           单个应用程序的二进制文件名，而非服务名，例如vsftpd 
+            以逗号或空格分隔的应用程序文件名列表，如:sshd,vsftpd 
+            ALL表示所有接受tcp_wrapper控制的服务程序 
+              主机有多个IP，可用@hostIP来实现控制
+                       如：in.telnetd@192.168.0.254 
+##  TCP_Wrappers的使用 
+    客户端Client_list格式 
+         以逗号或空格分隔的客户端列表 
+         基于IP地址：192.168.10.1   192.168.1. 
+         基于主机名：www.magedu.com  .magedu.com 较少用 
+         网络/掩码：192.168.0.0/255.255.255.0 
+         基于net/prefixlen: 192.168.1.0/24（CentOS7） 
+         基于网络组（NIS 域）：@mynetwork 
+         内置ACL：ALL，LOCAL，KNOWN，UNKNOWN，PARANOID 
+    EXCEPT用法：    
+            示例：  vsftpd: 172.16. EXCEPT 172.16.100.0/24 EXCEPT 172.16.100.1 
+    示例 
+     示例：只允许192.168.1.0/24的主机访问sshd  
+        /etc/hosts.allow     
+               sshd: 192.168.1.             
+         /etc/hosts.deny        
+                 sshd :ALL  
+    示例：只允许192.168.1.0/24的主机访问telnet和vsftpd服务 
+       /etc/hosts.allow   
+                   vsftpd,in.telnetd: 192.168.1.  
+         /etc/host.deny    
+                   vsftpd,in.telnetd:  ALL  
+ ##  TCP_Wrappers的使用 
+[:options]选项：   
+
+帮助：man 5 hosts_options    
+
+ deny 主要用在/etc/hosts.allow定义“拒绝”规则   
+
+                 如：vsftpd: 172.16. :deny 
+ allow 主要用在/etc/hosts.deny定义“允许”规则   
+
+                       如：vsftpd:172.16. :allow  
+ spawn 启动一个外部程序完成执行的操作    
+
+  twist   实际动作是拒绝访问,使用指定操作替换当前服务,标准输出和ERROR 发送到客户端,默认至/dev/null   
+
+##  测试工具：  
+                tcpdmatch [-d] daemon[@host] client 
+    例 如     tcpdmatch  -d in.telent  192.168.34.100 
+                 -d 测试当前目录下的hosts.allow和hosts.deny 
+示例 
+sshd: ALL :spawn echo "$(date +%%F) login  attempt  from  %c  to  %s,%d" >>/var/log/sshd.log    
+
+    说明： 
+            在/etc/hosts.allow中添加，允许登录，并记录日志 
+            在/etc/hosts.deny中添加，拒绝登录，并记录日志 
+            %c 客户端信息   
+            %s 服务器端信息 
+            %d 服务名   
+             %p 守护进程的PID 
+             %% 表示% 
+vsftpd: 172.16.  :twist /bin/echo “connection prohibited” 
+
+##  PAM认证机制 
+    PAM相关文件 
+         模块文件目录：/lib64/security/*.so  
+         环境相关的设置：/etc/security/ 
+         主配置文件:/etc/pam.conf，默认不存在 
+         为每种应用模块提供一个专用的配置文件：/etc/pam.d/APP_NAME 
+          注意：如/etc/pam.d存在，/etc/pam.conf将失
+## pam认证原理 
+PAM认证一般遵循这样的顺序：Service(服务)→PAM(配置文件)→pam_*.so    
+
+PAM认证首先要确定那一项服务，然后加载相应的PAM的配置文件(位于 /etc/pam.d下)，最后调用认证文件(位于/lib/security下)进行安全认证   
+
+## PAM认证机制 
+ 1. 使用者执行/usr/bin/passwd 程序，并输入密码
+ 2. passwd开始调用PAM模块，PAM模块会搜寻passwd程序的PAM相关设置文 件，这个设置文件一         般是在/etc/pam.d/里边的与程序同名的文件，即PAM会 搜寻/etc/pam.d/passwd此设置文件 
+3. 经由/etc/pam.d/passwd设定文件的数据，取用PAM所提供的相关模块来进 行验证
+ 4. 将验证结果回传给passwd这个程序，而passwd这个程序会根据PAM回传的 结果决定下一个动作（重新输入密码或者通过验证） 
+## PAM认证机制 
+    通用配置文件/etc/pam.conf格式  
+              application  type  control  module-path  arguments 
+    专用配置文件/etc/pam.d/* 格式 
+              type control  module-path  arguments 
+    说明： 
+    服务名（application）
+              telnet、login、ftp等，服务名字“OTHER”代表所有没有在该文件中明确配 置的其它服务 
+    模块类型（module-type） 
+             control  PAM库该如何处理与该服务相关的PAM模块的成功或失败情况 
+             module-path 用来指明本模块对应的程序文件的路径名 
+            Arguments  用来传递给该模块的参数 
+##  PAM认证机制 
+模块类型（module-type）   
+
+Auth 账号的认证和授权   
+
+          Account 与账号管理相关的非认证类的功能，如：用来限制/允许用户对某 个服务的访问时间，当前有效的系统资源(最多可以有多少个用户)，限制用 户的位置(例如：root用户只能从控制台登录) 
+         Password 用户修改密码时密码复杂度检查机制等功能 
+         Session 用户获取到服务之前或使用服务完成之后需要进行一些附加的操作， 如：记录打开/关闭数据的信息，监视目录等 
+          -type 表示因为缺失而不能加载的模块将不记录到系统日志,对于那些不总是 安装在系统上的模块有用 
+    Control:   
+          PAM库如何处理与该服务相关的PAM模块成功或失败情况 
+    两种方式实现：
+             简单和复杂 
+    简单方式实现：一个关健词实现 
+          required ：一票否决，表示本模块必须返回成功才能通过认证，但是如果该 模块返回失败，失败结果也不会立即通知用户，而是要等到同一type中的所 有模块全部执行完毕再将失败结果返回给应用程序，即为必要条件 
+
+requisite ：一票否决，该模块必须返回成功才能通过认证，但是一旦该模块返 回失败，将不再执行同一type内的任何模块，而是直接将控制权返回给应用程 序。是一个必要条件 
+sufficient ：一票通过，表明本模块返回成功则通过身份认证的要求，不必再执 行同一type内的其它模块，但如果本模块返回失败可忽略，即为充分条件 
+optional ：表明本模块是可选的，它的成功与否不会对身份认证起关键作用， 其返回值一般被忽略 
+include： 调用其他的配置文件中定义的配置信息 
+ 
+复杂详细实现：使用一个或多个“status=action” 
+        [status1=action1 status2=action …]  
+                Status:检查结果的返回状态  
+                Action:采取行为 ok，done，die，bad，ignore，reset 、
+       ok  模块通过，继续检查 
+       done 模块通过，返回最后结果给应用 
+       bad 结果失败，继续检查 
+       die 结果失败，返回失败结果给应用 
+       ignore 结果忽略，不影响最后结果 
+       reset 忽略已经得到的结果 
+module-path: 模块路径 
+相对路径：  
+            /lib64/security目录下的模块可使用相对路径   
+            如：pam_shells.so、pam_limits.so 绝对路径： 
+模块通过读取配置文件完成用户对系统资源的使用控制  
+             /etc/security/*.conf 
+注意：修改PAM配置文件将马上生效   
+
+建议：编辑pam规则时，保持至少打开一个root会话，以防止root身份验证错误   
+
+Arguments  用来传递给该模块的参数   
+
+ 
+##  pam文档说明 
+/user/share/doc/pam-*   
+
+rpm -qd pam   
+
+man –k pam_   
+
+man 模块名 如man rootok 
+《The Linux-PAM System  Administrators' Guide》   
+
+ 
+##  PAM模块示例 
+模块：pam_shells   
+
+功能：检查有效shell   
+
+man pam_shells   
+
+     示例：不允许使用/bin/csh的用户本地登录
+     vim /etc/pam.d/login     
+                auth required pam_shells.so 
+      vim /etc/shells    
+          去掉 /bin/csh
+      useradd –s /bin/csh 
+      testuser testuser将不可登录
+      tail /var/log/secure 
+## PAM模块示例 
+模块：pam_securetty.so   
+
+功能：只允许root用户在/etc/securetty列出的安全终端上登陆   
+
+    示例：允许root在telnet登陆
+        vi /etc/pam.d/remote 
+         #auth required pam_securetty.so #将这一行加上注释 
+         或者/etc/securetty文件中加入 
+         pts/0,pts/1…pts/n 
+模块：pam_nologin.so   
+
+    功能： 
+       如果/etc/nologin文件存在,将导致非root用户不能登陆 
+       如果用户shell是/sbin/nologin 时，当该用户登陆时，会显示/etc/nologin 文件内容，并拒绝登陆 
+模块：pam_limits.so   
+
+功能：在用户级别实现对其可使用的资源的限制，例如：可打开的文件数量， 可运行的进程数量，可用内存空间   
+
+    修改限制的实现方式： 
+       (1) ulimit命令，立即生效，但无法保存 
+                  -n   每个进程最多的打开的文件描述符个数 
+                  -u   最大用户进程数
+                   -S   使用 soft（软）资源限制  
+                  -H   使用 hard（硬）资源限制 
+(2) 配置文件：/etc/security/limits.conf,   
+ /etc/security/limits.d/*.conf   
+
+配置文件：每行一个定义；   
+
+        <domain>        <type>  <item>  <value> 
+pam_limits.so   
+
+domain 应用于哪些对象   
+
+         Username 单个用户 
+         @group 组内所有用户 
+         *  所有用户 
+type 限制的类型    
+
+         Soft 软限制,普通用户自己可以修改 
+          Hard 硬限制,由root用户设定，且通过kernel强制生效 
+           -  二者同时限定    
+
+item 限制的资源    
+
+         nofile 所能够同时打开的最大文件数量,默认为1024  
+         nproc 所能够同时运行的进程的最大数量,默认为1024 
+ value 指定具体值   
+
+##  示例：pam_limits.so 
+限制用户最多打开的文件数和运行进程数   
+
+/etc/pam.d/system-auth    
+
+              session     required      pam_limits.so 
+vim /etc/security/limits.conf     
+
+          apache  –  nofile 10240  用户apache可打开10240个文件 
+          student  hard nproc 20 用户student不能运行超过20个进程
