@@ -17,9 +17,11 @@ php：脚本语言解释器
 
 
 php配置 
-php.ini的核心配置选项文档：  
+php.ini的核心配置选项文档：    
+
  http://php.net/manual/zh/ini.core.php 
 php.ini配置选项列表：  
+
 http://php.net/manual/zh/ini.list.php 
  
 php语言格式
@@ -65,13 +67,13 @@ $mysqli->close();
 
 
 实验
-1安装数据库  启动  (27)
+1.安装数据库  启动  (27)
 yuminstall mariadb-server
-2  建立账户   用来让别的主机连接
+2.  建立账户   用来让别的主机连接
 grant all on *.* to test@'192.168.34.%' idenfified by '123456';
-3 在另一个主机上安装  (7)
+3. 在另一个主机上安装  (7)
 yum install php-mysql
-4  写测试 /var/www/hmtl 下
+4.  写测试 /var/www/hmtl 下
 vim pdo.php
 <?php 
 $mysqli=new mysqli("192.168.34.5",“test",“123456"); 
@@ -103,27 +105,27 @@ die();
 常见LAMP应用 
 PhpMyAdmin是一个以PHP为基础，以Web-Base方式架构在网站主机上的 MySQL的数据库管理工具，让管理者可用Web接口管理MySQL数据库 
 布署phpMyadmin 
-1安装相应的包 启动服务
+1. 安装相应的包 启动服务
 yum -y install  httpd mariadb-server php php-mysql 
 systemctl start httpd 
 systemctl start mariadb 
 mysql_secure_installation 
-2下载：https://www.phpmyadmin.net/downloads/ 
-3 解包 
+2. 下载：https://www.phpmyadmin.net/downloads/ 
+3.  解包 
 tar xvf phpMyAdmin-4.0.10.20-all-languages.tar.xz -C /var/www/html 
-4cd phpMyAdmin-4.0.10.20-all-languages
-5 改配置名字
+4. cd phpMyAdmin-4.0.10.20-all-languages
+5.  改配置名字
 cp config.sample.inc.php  config.inc.php 
-6 可以改一下口令 
+6.  可以改一下口令 
 vim  config.inc.php 
-7给mysql配置口令 
+7. 给mysql配置口令 
 跑脚本 mysql_secure_installation
 如果找不到路径就软连接路径
 ln -s  /data/mysql/mysql.sock /tmp/mysql.sock
-8安装包
+8. 安装包
 yum install php-mysql
 yum -y install php-mbstring 
-9启动 systemctl reload httpd 
+9. 启动 systemctl reload httpd 
 
 WordPress是一种使用PHP语言开发的博客平台，用户可以在支持PHP和MySQL 数据库的服务器上架设属于自己的网站。也可把 WordPress当作一个内容管理系 统（CMS）来使用 
 布署wordpress 
@@ -146,13 +148,13 @@ Crossday Discuz! Board（简称 Discuz!）是一套通用的社区论坛软件�
 准备数据库  创建用户和口令 跑脚本 
 mysql_secure_installation
 
-1 下载安装包
-2 解压缩 unzip d
-3 cd upload/
-4  赋予权限
+1. 下载安装包
+2. 解压缩 unzip d
+3. cd upload/
+4.  赋予权限
 setfacl -R -m u:apache:rwx upload/
-5  安装 进入网页
-6 装完以后取消权限
+5.  安装 进入网页
+6. 装完以后取消权限
 
 ECShop是一款B2C独立网店系统，适合企业及个人快速构建个性化网上商店。 系统是基于PHP语言及MYSQL数据库构架开发的跨平台开源程序。2006年6月， ECShop推出第一个版本1.0 
 
@@ -289,12 +291,12 @@ php-fpm包：专用于将php运行于fpm模式
 --------------------------------------------------------------------------------
 实验
 实现LAMP 架构
-1(7) 安装包 (基于模块方式）
+1. (7) 安装包 (基于模块方式）
 yum install  httpd php php-mysql    
-2(27) 在另一个主机上安装好数据库并且在数据库上创建一个用户和创建一个数据库
+2. (27) 在另一个主机上安装好数据库并且在数据库上创建一个用户和创建一个数据库
 grant all on *.* to test@'192.168.34.%' identified by  '123456';
 crreate tester 
-3(7) 传入WordPress  解压到 /var.www.html 
+3. (7) 传入WordPress  解压到 /var.www.html 
 或者是解压完 把目录下的数据拷贝到/var/ww/html
 cd /wordpress/
 cp -av . /var/www/html/
@@ -308,7 +310,7 @@ vim  wp-config.php
 用第三个主机
 ab -c 10 -n 200 http://192.168.34.5/
 
-4 (7)
+4. (7)
 安装加速器
 yum  install php-xcache
 重启http服务
@@ -440,18 +442,18 @@ apachectl restart
  
 --------------------------------------------------------------------------------
 CentOS7 fpm方式编译安装LAMP 
-1 tar xvf php-7.1.7.tar.bz2  
- 2 cd php-7.1.7/ 
-3 ./configure --prefix=/app/php \ --enable-mysqlnd \ --with-mysqli=mysqlnd \ --with-openssl \ --with-pdo-mysql=mysqlnd \ --enable-mbstring  \ --with-freetype-dir \ --with-jpeg-dir \ --with-png-dir \ --with-zlib \ --with-libxml-dir=/usr \ --enable-xml \ --enable-sockets \ --enable-fpm  \ --with-config-file-path=/etc \ --with-config-file-scan-dir=/etc/php.d \ --enable-maintainer-zts \ --disable-fileinfo  
-4  cp php.ini-production  /etc/php.ini 
-5  cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm 
-6  chmod +x /etc/init.d/php-fpm  
-7  chkconfig --add php-fpm  
-8  chkconfig php-fpm on 
-9  cd /app/php/etc 
-10 cp php-fpm.conf.default php-fpm.conf 
-11 cp php-fpm.d/www.conf.default  php-fpm.d/www.conf 
-12 service php-fpm start 
+1. tar xvf php-7.1.7.tar.bz2  
+2. cd php-7.1.7/ 
+3. ./configure --prefix=/app/php \ --enable-mysqlnd \ --with-mysqli=mysqlnd \ --with-openssl \ --with-pdo-mysql=mysqlnd \ --enable-mbstring  \ --with-freetype-dir \ --with-jpeg-dir \ --with-png-dir \ --with-zlib \ --with-libxml-dir=/usr \ --enable-xml \ --enable-sockets \ --enable-fpm  \ --with-config-file-path=/etc \ --with-config-file-scan-dir=/etc/php.d \ --enable-maintainer-zts \ --disable-fileinfo  
+4.  cp php.ini-production  /etc/php.ini 
+5.  cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm 
+6.  chmod +x /etc/init.d/php-fpm  
+7.  chkconfig --add php-fpm  
+8.  chkconfig php-fpm on 
+9.  cd /app/php/etc 
+10. cp php-fpm.conf.default php-fpm.conf 
+11. cp php-fpm.d/www.conf.default  php-fpm.d/www.conf 
+12. service php-fpm start 
  配置httpd支持php 
 vim /app/httpd24/conf/httpd.conf  
 取消下面两行的注释 
@@ -539,24 +541,24 @@ vim /app/httpd24/htdocs/index.php
  准备 俩个主机7和17 分工（7）lap    （17） mysql 
 (7) 相应的包 php-7.1.18.tar.bz2  apr-1.6.5.tar.bz2    apr-util-1.6.1.tar.bz2     httpd-2.4.37.tar.bz2 
 wordpress-4.9.4-zh_CN.tar.gz
-1  编译 httpd
+1.  编译 httpd
  解相应的包 一个一个的解tar xf  apr-1.6.5.tar.bz2    apr-util-1.6.1.tar.bz2     httpd-2.4.37.tar.bz2
-2 cp -r  apr-1.6.5  httpd-2.4.37/srclib.apr
+2. cp -r  apr-1.6.5  httpd-2.4.37/srclib.apr
    cp -r  apr-unil-1.6.1  httpd-2.4.37/srclib.apr-unil
   cd httpd-2.4.37/
-3  装包组和依赖包
+3.  装包组和依赖包
 yum groupinstall "development tools"  -y
 yum  install  pcre-devel   openssl-devel  expat-devel  -y
-4   ./configure --prefix=/app/httpd24 \  --enable-so \  --enable-ssl \  --enable-cgi \  --enable-rewrite \  --with-zlib \  --with-pcre  \  --enable-modules=most  \  --enable-mpms-shared=all \  --with-mpm=prefork  \  --with-included-apr 
-5 make -j 4 && make install 
-6准备变量 
+4.   ./configure --prefix=/app/httpd24 \  --enable-so \  --enable-ssl \  --enable-cgi \  --enable-rewrite \  --with-zlib \  --with-pcre  \  --enable-modules=most  \  --enable-mpms-shared=all \  --with-mpm=prefork  \  --with-included-apr 
+5. make -j 4 && make install 
+6. 准备变量 
  cd /app/httpd24
 echo 'PATH=/app/httpd24/bin:$PATH' > /etc/profile.d/lamp.sh
 . /etc/profile.d/lamp.sh
-7  cd  httpd-2.4.37/app/http24/bin
+7.  cd  httpd-2.4.37/app/http24/bin
  .  /etc/profile.d/lamp.sh
 启动  apachectl start
-8建一个Apache用户
+8. 建一个Apache用户
 useradd -r -s /sbin/nologin apache
 修改httpd配置文件 加入用户
 vim /app/httpd24/conf/httpd.conf
@@ -567,27 +569,27 @@ vim /app/httpd24/conf/httpd.conf
 
 (17)编译数据库 （二进制安装）
 相应的安装包mariadb-10.2.19-linux-x86_64.tar.gz
-1 解压缩 到指定位置
+1. 解压缩 到指定位置
 tar xcf mariadb-10.2.19-linux-x86_64.tar.gz  -C /usr/local/
-2  建立用户 cd  /usr/local/
+2.  建立用户 cd  /usr/local/
 useradd -s /sbin/nologin -r mysql  -d /data/mysql
 改所属组
 chown -R root.root mariadb-10.2.19-linux-x86_64/
 创建软连接
 ln -s   mariadb-10.2.19-linux-x86_64/  mysql
-3  cd  mysql/
+3.  cd  mysql/
 mkdir /data/mysql
 chown mysql.mysql /data/mysql
 脚本
 scripts/mysql_install_ab --user=mysql --datadir=/data/mysql
-4 配置文件   都 在/usr/local/mysql下
+4. 配置文件   都 在/usr/local/mysql下
 mkdir /etc/mysql/
 cp  support-files/my-huge.cnf  /etc/mysql/my.cnf
 改配置文件
 vim  /etc/mysql/my.cnf   加入
  [mysqld] 
 datadir=/data/mysql
-5 启动脚本
+5. 启动脚本
 cp support-files/mysql.server  /etc/init.d/mysqld
 chkconfig --list
 chkconfig --add mysqld
@@ -596,19 +598,19 @@ chkconfig --add mysqld
 在/usr/local/mysql下
 echo 'PATH=/usr/local/mysql/bin:$PATH' > /etc/profile.d/mysql.sh
 . /etc/profile.d/mysql.sh
-6 建立数据库 创建账号
+6. 建立数据库 创建账号
 create database wpdb;
 grant all  on wpdb.*  to wpuser@'192.168.34.%' identified by 'cebtos'
 
 (7) 编译php     fpm 方式
-1安装依赖包 
+1. 安装依赖包 
 yum install  libxml2-devel  bzip2-devel libmcrypt-devel       (epel) 
 解包 tar xvf php-7.1.18.tar.bz2 
 cd  php-7.1.18/
 ./configure --help  查看编译选项
-2  ./configure --prefix=/app/php \ --enable-mysqlnd \ --with-mysqli=mysqlnd \ --with-openssl \ --with-pdo-mysql=mysqlnd \ --enable-mbstring  \ --with-freetype-dir \ --with-jpeg-dir \ --with-png-dir \ --with-zlib \ --with-libxml-dir=/usr \ --enable-xml \ --enable-sockets \ --enable-fpm  \ --with-config-file-path=/etc \ --with-config-file-scan-dir=/etc/php.d \ --enable-maintainer-zts \ --disable-fileinfo  
+2.  ./configure --prefix=/app/php \ --enable-mysqlnd \ --with-mysqli=mysqlnd \ --with-openssl \ --with-pdo-mysql=mysqlnd \ --enable-mbstring  \ --with-freetype-dir \ --with-jpeg-dir \ --with-png-dir \ --with-zlib \ --with-libxml-dir=/usr \ --enable-xml \ --enable-sockets \ --enable-fpm  \ --with-config-file-path=/etc \ --with-config-file-scan-dir=/etc/php.d \ --enable-maintainer-zts \ --disable-fileinfo  
 
-3  配置httpd支持php
+3.  配置httpd支持php
 vim /app/httpd24/conf/httpd.conf  
 取消下面两行的注释 
 LoadModule proxy_module modules/mod_proxy.so 
@@ -622,7 +624,7 @@ AddType application/x-httpd-php .php
 AddType application/x-httpd-php-source .phps
  ProxyRequests Off 
 ProxyPassMatch  ^/(.*\.php)$ fcgi://127.0.0.1:9000/app/httpd24/htdocs/$1 
-4 在php-7.1.18/下
+4. 在php-7.1.18/下
 复制配置文件
  cp php.ini-production  /etc/php.ini 
 复制脚本
@@ -633,7 +635,7 @@ ProxyPassMatch  ^/(.*\.php)$ fcgi://127.0.0.1:9000/app/httpd24/htdocs/$1
 chkconfig --add php-fpm  
 开启
  chkconfig php-fpm on 
-5 cd /app/php/etc 
+5. cd /app/php/etc 
 改名
 cp php-fpm.conf.default php-fpm.conf 
 改名
@@ -650,21 +652,21 @@ mv wp-config-sample.php wp-config.php
 vim wp-config.php   把数据库的账号密码数据库写入
 
 提高性能
-1改配置文件  增加sock 
+1. 改配置文件  增加sock 
  vim php-fpm.d/www.conf 
 listen =/tmp/php-fpm.sock
 重启服务
 service php-fpm restart 
-2改http的配置文件
+2. 改http的配置文件
 vim /app/httpd24/conf/httpd.conf  
 ProxyPassMatch  "^/(.*\.php(/.*)?)$ "unix:/tmp/php-fpm.sock |fcgi://localhost/app//httpd24/htdocs/" 
-3 apachectl stop 
+3. apachectl stop 
    apachectl start
 如果错误  查看日志
 tail -f  /app/httpd24/logs/error_log
 
 实验：实现UDS的FASTCGI
-1  创建用户
+1.  创建用户
 useradd apache 
 修改用户
 vim  /app/httpd24/conf/httpd.conf 
